@@ -1,0 +1,17 @@
+# Changes here will be overwritten by Copier
+# DO NOT MANUALLY MODIFY THIS FILE
+_commit: latest
+_src_path: https://github.com/calliope-project/data-module-template.git
+author_email: m.chen-4@tudelft.nl
+author_family_name: Chen
+author_given_name: Meijun
+github_org: calliope-project
+license: Apache-2.0
+module_description: This module uses external data, mostly from FAO AQUASTAT, to estimate
+    the water available for additional green hydrogen production on a national geographical
+    resolution. If there is water stress, then assume a certain level of desalination
+    can be used for that, with configurable assumptions of to what quantity desalination
+    can be used and how desalination is deployed. The module outputs the quantity-cost
+    curve for the water for green hydrogen.
+module_long_name: Module to estimate water provision for green hydrogen production
+module_short_name: module_water_for_gh2

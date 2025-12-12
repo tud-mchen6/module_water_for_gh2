@@ -28,7 +28,7 @@ properties:
     description: "Whether to include Zero Liquid Discharge (ZLD) in the water sourcing options. Cannot be true if include_desal is False."
     type: boolean
   basic_withdrawal_cost:
-    description: "Basic cost of water withdrawal (unit to be defined)."
+    description: "Basic cost of water withdrawal (EUR/m3)."
     type: number
     minimum: 0
   freshwater_for_h2:
@@ -40,5 +40,5 @@ properties:
     description: "Whether to compensate water stress with desalinated wtaer."
     type: boolean
   plot_limit:
-    description: "Limit for plotting the x-axis of the curves (unit to be defined)."
+    description: "Limit for plotting the x-axis of the curves (1e9 m3)."
     type: number

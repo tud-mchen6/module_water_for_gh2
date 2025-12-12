@@ -6,7 +6,7 @@ cost_curves_dir: "results/cost_curves/"
 energy_curves_dir: "results/energy_curves/"
 include_desal: True
 include_ZLD: True
-basic_withdrawal_cost: 0.01 # unit: 1e9 EUR
+basic_withdrawal_cost: 0.01 # unit: EUR/m3
 freshwater_for_h2: 0.5 # proportion of usable water allocated for green hydrogen production
 compensate: True
 plot_limit: 50 # unit: 1e9 m3

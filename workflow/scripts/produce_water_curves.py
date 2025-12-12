@@ -161,8 +161,8 @@ def produce_water_curves(processed : str,
                 y_E = np.full_like(x, 0)
 
 
-        output_df = pd.DataFrame({'x': x, 'y': y})
-        output_E_df = pd.DataFrame({'x': x, 'y': y_E})
+        output_df = pd.DataFrame({'water_quantity': x, 'unit_water':'1e9 m3', 'cost': y, 'unit_cost':'1e9 EUR'})
+        output_E_df = pd.DataFrame({'water_quantity': x, 'unit_water':'1e9 m3', 'energy': y_E, 'unit_cost':'TWh'})
         os.makedirs(os.path.dirname(cost_curves_dir), exist_ok=True)
         os.makedirs(os.path.dirname(energy_curves_dir), exist_ok=True)
         output_df.to_csv(cost_curves_dir+'/water_curve'+file_name+suffix_1+suffix_2+'.csv', index=False)

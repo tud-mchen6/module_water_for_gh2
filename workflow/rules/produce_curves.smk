@@ -17,7 +17,8 @@ rule produce_water_curves:
         plot_limit=config["plot_limit"],
     output:
         touch("results/cost_curves/compute_complete.flag")
-    # conda:
+    conda:
+        "../envs/default.yaml",
     script:
         "../scripts/produce_water_curves.py"
 

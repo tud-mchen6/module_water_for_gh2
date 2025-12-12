@@ -8,5 +8,7 @@ rule download_FAO_bulk:
         url=internal["resources"]["automatic"]["FAO_bulk_url"],
     output:
         bulk="resources/automatic/bulk_FAO.csv",
+    conda:
+        "../envs/shell.yaml",
     shell:
         'curl -sSLo {output.bulk} "{params.url}"'

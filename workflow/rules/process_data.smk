@@ -12,6 +12,8 @@ rule select_bulk_FAO_data:
         params_relevant=internal["resources"]["automatic"]["params_relevant"],
     output:
         selected_path="resources/processed/selected_FAO.csv",
+    conda:
+        "../envs/default.yaml",
     script:
         "../scripts/select_bulk_FAO_data.py"
 
@@ -26,5 +28,7 @@ rule process_FAO_data:
         internal_use_factor=config["internal_use_factor"],
     output:
         processed_path="resources/processed/processed_FAO.csv",
+    conda:
+        "../envs/default.yaml",
     script:
         "../scripts/process_FAO_data.py"

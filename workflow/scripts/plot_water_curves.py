@@ -3,6 +3,7 @@ import heapq as hq
 import os
 from internal.helper_functions import *
 from matplotlib import pyplot as plt
+import itertools
 
 
 
@@ -25,86 +26,146 @@ def plot_water_curves(cost_curves_dir: str,
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
-    for filename in os.listdir(cost_curves_dir):
-        if filename.endswith(".csv"):
-            filename_trancate = filename.replace('.csv', '') # to avoid trouble in following string slicing
-            country = filename_trancate.split('_')[2] # hard-coded based on naming convention
-            if (len(plot_countries) > 0) and (country not in plot_countries):
-                continue
-            filepath = os.path.join(cost_curves_dir, filename)
-            water_curve = pd.read_csv(filepath)
+    # iterate through directories in the curves folder
+    countries = [
+        d for d in os.listdir(cost_curves_dir)
+        if os.path.isdir(os.path.join(cost_curves_dir, d))
+    ]
+    # iterate over cost or energy
+    params_dict = {
+        'cost': {
+            'dir': cost_curves_dir,
+            'column_name': 'cost',
+            'ylabel': 'Cumulative cost (billion EUR/year)',
+            'plot_title': 'Water Supply Cost Curve',
+            'savefig_name': '/cost_curve_',
 
-            # Add suffix
-            verbal_suffix = ''
-            flag_zld = False
-            if 'noDesal' in filename_trancate:
-                verbal_suffix += ', no desalination'
-            else:
-                if 'ZLD' in filename_trancate:
-                    verbal_suffix += ' with ZLD'
-                    flag_zld = True
-                if ('comp' in filename_trancate) and flag_zld:
-                    verbal_suffix += ', with compensation'
-                elif ('comp' in filename_trancate) and flag_zld==False:
-                    verbal_suffix += ' with compensation'
-                if verbal_suffix != '':
-                    verbal_suffix = ' (' + verbal_suffix.strip() + ')'
-            suffix = filename_trancate.split(country, 1)[1]
+        },
+        'energy': {
+            'dir': energy_curves_dir,
+            'column_name': 'energy',
+            'ylabel': 'Cumulative energy (TWh/year)',
+            'plot_title': 'Water Supply Energy Demand Curve',
+            'savefig_name': '/energy_curve_',
+        },
+    }
 
-            # Start plotting
+    for country in countries:
+        os.makedirs(output_dir + country, exist_ok=True)
+
+        for key in params_dict.keys():
+            data_dir = params_dict[key]['dir']
+            column_name = params_dict[key]['column_name']
+            ylabel = params_dict[key]['ylabel']
+            plot_title = params_dict[key]['plot_title']
+            savefig_name = params_dict[key]['savefig_name']
+
+            curves_dict = {}
+            for filename in os.listdir(os.path.join(data_dir, country)):
+                if filename.endswith(".csv"):
+                    filename_trancate = filename.replace('.csv', '') # to avoid trouble in following string slicing
+                    if (len(plot_countries) > 0) and (country not in plot_countries):
+                        continue
+                    filepath = os.path.join(data_dir, country, filename)
+                    water_curve = pd.read_csv(filepath)
+                    ylabel = params_dict[key]['ylabel']
+
+                    # Add suffix for single plots
+                    verbal_suffix = ''
+                    flag_zld = False
+                    if 'noDesal' in filename_trancate:
+                        verbal_suffix += ', no desalination'
+                    else:
+                        if 'ZLD' in filename_trancate:
+                            verbal_suffix += ' with ZLD'
+                            flag_zld = True
+                        if ('comp' in filename_trancate) and flag_zld:
+                            verbal_suffix += ', with compensation'
+                        elif ('comp' in filename_trancate) and flag_zld==False:
+                            verbal_suffix += ' with compensation'
+                        if verbal_suffix != '':
+                            verbal_suffix = ' (' + verbal_suffix.strip() + ')'
+                    suffix = filename_trancate.split(country, 1)[1]
+                    if 'noDesal' not in filename_trancate:
+                        curves_dict[column_name.capitalize() + ' curve'+verbal_suffix] = water_curve
+
+                    # # Start plotting single plots
+                    # plt.figure(figsize=(8,6))
+                    # plt.plot(water_curve['water_quantity'], water_curve[column_name], linewidth=6,)
+                    # plt.xlabel('Cumulative Water Supply (billion m³/year)')
+                    # plt.ylabel(ylabel)
+                    # xlim = plot_limit
+                    # plt.xlim(0, xlim)
+                    # plt.ylim(ymin=0)
+                    # plt.title(plot_title + f' {get_country_name([country])}' + verbal_suffix)
+                    # plt.legend()
+                    # plt.grid(True, alpha=0.3)
+                    # plt.tight_layout()
+                    # plt.savefig(output_dir + country + savefig_name + country + suffix + '.png', bbox_inches="tight", )
+
+            # For combined plots
+            line_styles = [
+                            "-",                 # solid
+                            "--",                # dashed
+                            ":",                 # dotted
+                            "-.",                # dash-dot
+                        ]
+            styles = itertools.cycle(line_styles)
             plt.figure(figsize=(8,6))
-            plt.plot(water_curve['water_quantity'], water_curve['cost'], linewidth=6,)
+            for (label, water_curve), ls in zip(curves_dict.items(), styles):
+                plt.plot(water_curve['water_quantity'], water_curve[column_name], linewidth=3, linestyle=ls, label=label, alpha=0.7)
             plt.xlabel('Cumulative Water Supply (billion m³/year)')
-            plt.ylabel('Cumulative cost (billion EUR/year)')
+            plt.ylabel(ylabel)
             xlim = plot_limit
             plt.xlim(0, xlim)
             plt.ylim(ymin=0)
-            plt.title(f'Water Supply Cost Curve for {get_country_name([country])}' + verbal_suffix)
+            plt.title(plot_title + f' {get_country_name([country])}')
             plt.legend()
             plt.grid(True, alpha=0.3)
             plt.tight_layout()
-            plt.savefig(output_dir + 'water_curve_' + country + suffix + '.png', bbox_inches="tight", )
+            plt.savefig(output_dir + country + savefig_name + country + '_combined.png', bbox_inches="tight", )
 
-    # Energy curves
-    for filename in os.listdir(energy_curves_dir):
-        if filename.endswith(".csv"):
-            filename_trancate = filename.replace('.csv', '') # to avoid trouble in following string slicing
-            country = filename_trancate.split('_')[2] # hard-coded based on naming convention
-            if (len(plot_countries) > 0) and (country not in plot_countries):
-                continue
-            filepath = os.path.join(energy_curves_dir, filename)
-            water_curve = pd.read_csv(filepath)
 
-            # Add suffix
-            verbal_suffix = ''
-            flag_zld = False
-            if 'noDesal' in filename_trancate:
-                verbal_suffix += ', no desalination'
-            else:
-                if 'ZLD' in filename_trancate:
-                    verbal_suffix += ' with ZLD'
-                    flag_zld = True
-                if ('comp' in filename_trancate) and flag_zld:
-                    verbal_suffix += ', with compensation'
-                elif ('comp' in filename_trancate) and flag_zld==False:
-                    verbal_suffix += ' with compensation'
-                if verbal_suffix != '':
-                    verbal_suffix = ' (' + verbal_suffix.strip() + ')'
-            suffix = filename_trancate.split(country, 1)[1]
+    # # Energy curves
+    # for filename in os.listdir(energy_curves_dir):
+    #     if filename.endswith(".csv"):
+    #         filename_trancate = filename.replace('.csv', '') # to avoid trouble in following string slicing
+    #         country = filename_trancate.split('_')[2] # hard-coded based on naming convention
+    #         if (len(plot_countries) > 0) and (country not in plot_countries):
+    #             continue
+    #         filepath = os.path.join(energy_curves_dir, filename)
+    #         water_curve = pd.read_csv(filepath)
 
-            # Start plotting
-            plt.figure(figsize=(8,6))
-            plt.plot(water_curve['water_quantity'], water_curve['energy'], linewidth=6,)
-            plt.xlabel('Cumulative Water Supply (billion m³/year)')
-            plt.ylabel('Cumulative energy (TWh/year)')
-            xlim = plot_limit
-            plt.xlim(0, xlim)
-            plt.ylim(ymin=0)
-            plt.title(f'Water Supply Energy Demand for {get_country_name([country])}' + verbal_suffix)
-            plt.legend()
-            plt.grid(True, alpha=0.3)
-            plt.tight_layout()
-            plt.savefig(output_dir + 'energy_curve_' + country + suffix + '.png', bbox_inches="tight", )
+    #         # Add suffix
+    #         verbal_suffix = ''
+    #         flag_zld = False
+    #         if 'noDesal' in filename_trancate:
+    #             verbal_suffix += ', no desalination'
+    #         else:
+    #             if 'ZLD' in filename_trancate:
+    #                 verbal_suffix += ' with ZLD'
+    #                 flag_zld = True
+    #             if ('comp' in filename_trancate) and flag_zld:
+    #                 verbal_suffix += ', with compensation'
+    #             elif ('comp' in filename_trancate) and flag_zld==False:
+    #                 verbal_suffix += ' with compensation'
+    #             if verbal_suffix != '':
+    #                 verbal_suffix = ' (' + verbal_suffix.strip() + ')'
+    #         suffix = filename_trancate.split(country, 1)[1]
+
+    #         # Start plotting
+    #         plt.figure(figsize=(8,6))
+    #         plt.plot(water_curve['water_quantity'], water_curve['energy'], linewidth=6,)
+    #         plt.xlabel('Cumulative Water Supply (billion m³/year)')
+    #         plt.ylabel('Cumulative energy (TWh/year)')
+    #         xlim = plot_limit
+    #         plt.xlim(0, xlim)
+    #         plt.ylim(ymin=0)
+    #         plt.title(f'Water Supply Energy Demand for {get_country_name([country])}' + verbal_suffix)
+    #         plt.legend()
+    #         plt.grid(True, alpha=0.3)
+    #         plt.tight_layout()
+    #         plt.savefig(output_dir + 'energy_curve_' + country + suffix + '.png', bbox_inches="tight", )
 
 
 

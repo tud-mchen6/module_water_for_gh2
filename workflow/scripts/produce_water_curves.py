@@ -146,9 +146,9 @@ def produce_water_curves(processed : str,
                         y = np.concatenate([y_1, y_2])
                         y_E = np.concatenate([y_1_E, y_2_E])
                     else:
-                        x = np.linspace(0, min(row['excess'] * freshwater_for_h2, plot_limit), 100)
-                        y = np.full_like(x, basic_withdrawal_cost)
-                        y_E 
+                        x = x_1
+                        y = y_1
+                        y_E = y_1_E
                 else:
                     x = np.linspace(0, min(row['excess'] * freshwater_for_h2, plot_limit), 100)
                     y = np.full_like(x, basic_withdrawal_cost)
@@ -175,9 +175,6 @@ def produce_water_curves(processed : str,
         os.makedirs(os.path.dirname(energy_curves_dir+row['ISO3']+'/'), exist_ok=True)
         output_df.to_csv(cost_curves_dir+row['ISO3']+'/water_curve'+file_name+suffix_0+suffix_1+suffix_2+'.csv', index=False)
         output_E_df.to_csv(energy_curves_dir+row['ISO3']+'/energy_curve'+file_name+suffix_0+suffix_1+suffix_2+'.csv', index=False)
-        # else:
-        #     output_df.to_csv(cost_curves_dir+'/'+row['ISO3']+'/water_curve'+file_name+suffix_0+'.csv', index=False)
-        #     output_E_df.to_csv(energy_curves_dir+'/'+row['ISO3']+'/energy_curve'+file_name+suffix_0+'.csv', index=False)
 
 
 

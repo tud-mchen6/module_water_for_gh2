@@ -15,6 +15,7 @@ rule produce_water_curves:
         freshwater_for_h2=config["freshwater_for_h2"],
         compensate=config["compensate"],
         plot_limit=config["plot_limit"],
+        countries=lambda wildcards: config.get("countries", "")
     output:
         touch("results/cost_curves/compute_complete.flag"),
     conda:
@@ -32,7 +33,7 @@ rule plot_curves:
         energy_curves_dir=config["energy_curves_dir"],
         plot_limit=config["plot_limit"],
         output_dir="results/curves_plots/",
-        plot_countries=lambda wildcards: config.get("plot_countries", "")
+        plot_countries=lambda wildcards: config.get("countries", "")
     output:
         touch("results/curves_plotted/plot_complete.flag"),
     conda:

@@ -10,7 +10,8 @@ def produce_water_curves(processed : str,
                         include_desal : bool, include_ZLD : bool,
                         basic_withdrawal_cost : float = 0.01,
                         freshwater_for_h2 : float = 0.8,
-                        compensate : bool = True, plot_limit : float = 5):
+                        compensate : bool = True, plot_limit : float = 5,
+                        countries: list = []):
     """
     Produce both cost-quantity curves and energy-quantity curves for water for a
     given country with fixed cost and technical parameters for desalination.
@@ -27,6 +28,7 @@ def produce_water_curves(processed : str,
     - compensate: bool - Whether to use desalinated water to compensate for 
         local water stress.
     - plot_limit: float - The artificial x-axis limit in the final plot.
+    - countries: list - List of country codes to produce curves for. If empty, produce for all countries.
 
     Unit: water, 1e9 m3/year; monetary value, 1e9 EUR; energy, TWh/year.
     """
@@ -106,6 +108,9 @@ def produce_water_curves(processed : str,
     suffix_2 = '_comp' if compensate else ''
 
     for index, row in df.reset_index().iterrows():
+        # If countries list is provided, only produce curves for those countries
+        if (len(countries) > 0) and (row['ISO3'] not in countries):
+            continue
         file_name = f"_{row['ISO3']}"
         
         if not row['landlocked']:
@@ -166,12 +171,13 @@ def produce_water_curves(processed : str,
         output_E_df = pd.DataFrame({'water_quantity': x, 'unit_water':'1e9 m3', 'energy': y_E, 'unit_cost':'TWh'})
         os.makedirs(os.path.dirname(cost_curves_dir), exist_ok=True)
         os.makedirs(os.path.dirname(energy_curves_dir), exist_ok=True)
-        if include_desal:
-            output_df.to_csv(cost_curves_dir+'/water_curve'+file_name+suffix_0+suffix_1+suffix_2+'.csv', index=False)
-            output_E_df.to_csv(energy_curves_dir+'/energy_curve'+file_name+suffix_0+suffix_1+suffix_2+'.csv', index=False)
-        else:
-            output_df.to_csv(cost_curves_dir+'/water_curve'+file_name+suffix_0+'.csv', index=False)
-            output_E_df.to_csv(energy_curves_dir+'/energy_curve'+file_name+suffix_0+'.csv', index=False)
+        os.makedirs(os.path.dirname(cost_curves_dir+row['ISO3']+'/'), exist_ok=True)
+        os.makedirs(os.path.dirname(energy_curves_dir+row['ISO3']+'/'), exist_ok=True)
+        output_df.to_csv(cost_curves_dir+row['ISO3']+'/water_curve'+file_name+suffix_0+suffix_1+suffix_2+'.csv', index=False)
+        output_E_df.to_csv(energy_curves_dir+row['ISO3']+'/energy_curve'+file_name+suffix_0+suffix_1+suffix_2+'.csv', index=False)
+        # else:
+        #     output_df.to_csv(cost_curves_dir+'/'+row['ISO3']+'/water_curve'+file_name+suffix_0+'.csv', index=False)
+        #     output_E_df.to_csv(energy_curves_dir+'/'+row['ISO3']+'/energy_curve'+file_name+suffix_0+'.csv', index=False)
 
 
 
@@ -188,6 +194,7 @@ if __name__ == "__main__":
         freshwater_for_h2=snakemake.params.freshwater_for_h2,
         compensate=snakemake.params.compensate,
         plot_limit=snakemake.params.plot_limit,
+        countries=snakemake.params.countries,
     )
 
 

@@ -10,7 +10,7 @@ def produce_water_curves(processed : str,
                         include_desal : bool, include_ZLD : bool,
                         basic_withdrawal_cost : float = 0.01,
                         freshwater_for_h2 : float = 0.8,
-                        compensate : bool = True, plot_limit : float = 50):
+                        compensate : bool = True, plot_limit : float = 5):
     """
     Produce both cost-quantity curves and energy-quantity curves for water for a
     given country with fixed cost and technical parameters for desalination.
@@ -99,6 +99,7 @@ def produce_water_curves(processed : str,
 
     # create water curves and energy curves
     df = pd.read_csv(processed, index_col=0)
+    suffix_0 = '_noDesal' if not include_desal else ''
     suffix_1 = '_ZLD' if include_ZLD else ''
     # Compensation means if local renewable freshwater is insufficient, desalinated water needs to
     # first be used for local withdrawal, before being used for hydrogen production.
@@ -165,8 +166,12 @@ def produce_water_curves(processed : str,
         output_E_df = pd.DataFrame({'water_quantity': x, 'unit_water':'1e9 m3', 'energy': y_E, 'unit_cost':'TWh'})
         os.makedirs(os.path.dirname(cost_curves_dir), exist_ok=True)
         os.makedirs(os.path.dirname(energy_curves_dir), exist_ok=True)
-        output_df.to_csv(cost_curves_dir+'/water_curve'+file_name+suffix_1+suffix_2+'.csv', index=False)
-        output_E_df.to_csv(energy_curves_dir+'/energy_curve'+file_name+suffix_1+suffix_2+'.csv', index=False)
+        if include_desal:
+            output_df.to_csv(cost_curves_dir+'/water_curve'+file_name+suffix_0+suffix_1+suffix_2+'.csv', index=False)
+            output_E_df.to_csv(energy_curves_dir+'/energy_curve'+file_name+suffix_0+suffix_1+suffix_2+'.csv', index=False)
+        else:
+            output_df.to_csv(cost_curves_dir+'/water_curve'+file_name+suffix_0+'.csv', index=False)
+            output_E_df.to_csv(energy_curves_dir+'/energy_curve'+file_name+suffix_0+'.csv', index=False)
 
 
 

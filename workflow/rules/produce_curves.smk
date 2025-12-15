@@ -6,6 +6,7 @@ rule produce_water_curves:
         """Produce the water cost curve and energy curve."""
     input:
         processed="resources/processed/processed_FAO.csv",
+        configfile="config/config.yaml",
     params:
         cost_curves_dir=config["cost_curves_dir"],
         energy_curves_dir=config["energy_curves_dir"],
@@ -28,6 +29,8 @@ rule plot_curves:
     message:
         """Plot the water cost curve and energy curve that are
         found in the results folder."""
+    input:
+        configfile="config/config.yaml",
     params:
         cost_curves_dir=config["cost_curves_dir"],
         energy_curves_dir=config["energy_curves_dir"],
@@ -35,7 +38,7 @@ rule plot_curves:
         output_dir="results/curves_plots/",
         plot_countries=lambda wildcards: config.get("countries", "")
     output:
-        touch("results/curves_plotted/plot_complete.flag"),
+        touch("results/curves_plots/plot_complete.flag"),
     conda:
         "../envs/default.yaml",
     script:

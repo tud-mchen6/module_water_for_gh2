@@ -42,3 +42,8 @@ properties:
   plot_limit:
     description: "Limit for plotting the x-axis of the curves (1e9 m3)."
     type: number
+  plot_countries:
+    description: "List of country codes to plot the water curves for."
+    type: array
+    items:
+      type: string

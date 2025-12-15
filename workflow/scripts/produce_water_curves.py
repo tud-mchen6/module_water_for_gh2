@@ -128,7 +128,7 @@ def produce_water_curves(processed : str,
             # Beyond that limit, desalination is needed.
             else:
                 if row['excess'] * freshwater_for_h2 < plot_limit:
-                    x_1 = np.linspace(0, row['excess'] * freshwater_for_h2, 100)
+                    x_1 = np.linspace(0, min(row['excess'] * freshwater_for_h2, plot_limit), 100)
                     y_1 = np.full_like(x_1, basic_withdrawal_cost)
                     y_1_E = np.full_like(x_1, 0)
                 
@@ -141,11 +141,11 @@ def produce_water_curves(processed : str,
                         y = np.concatenate([y_1, y_2])
                         y_E = np.concatenate([y_1_E, y_2_E])
                     else:
-                        x = np.linspace(0, row['excess'] * freshwater_for_h2, 100)
+                        x = np.linspace(0, min(row['excess'] * freshwater_for_h2, plot_limit), 100)
                         y = np.full_like(x, basic_withdrawal_cost)
                         y_E 
                 else:
-                    x = np.linspace(0, row['excess'] * freshwater_for_h2, 100)
+                    x = np.linspace(0, min(row['excess'] * freshwater_for_h2, plot_limit), 100)
                     y = np.full_like(x, basic_withdrawal_cost)
                     y_E = np.full_like(x, 0)
 
@@ -157,7 +157,7 @@ def produce_water_curves(processed : str,
                 y = np.zeros(100)
                 y_E = np.zeros(100)
             else:
-                x = np.linspace(0, row['excess'] * freshwater_for_h2, 100)
+                x = np.linspace(0, min(row['excess'] * freshwater_for_h2, plot_limit), 100)
                 y = np.full_like(x, basic_withdrawal_cost)
                 y_E = np.full_like(x, 0)
 

@@ -4,6 +4,7 @@ import os
 from internal.helper_functions import *
 from matplotlib import pyplot as plt
 import itertools
+import numpy as np
 
 
 
@@ -26,11 +27,6 @@ def plot_water_curves(cost_curves_dir: str,
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
-    # iterate through directories in the curves folder
-    countries = [
-        d for d in os.listdir(cost_curves_dir)
-        if os.path.isdir(os.path.join(cost_curves_dir, d))
-    ]
     # iterate over cost or energy
     params_dict = {
         'cost': {
@@ -50,6 +46,7 @@ def plot_water_curves(cost_curves_dir: str,
         },
     }
 
+    countries = plot_countries
     for country in countries:
         os.makedirs(output_dir + country, exist_ok=True)
 
@@ -89,20 +86,6 @@ def plot_water_curves(cost_curves_dir: str,
                     if 'noDesal' not in filename_trancate:
                         curves_dict[column_name.capitalize() + ' curve'+verbal_suffix] = water_curve
 
-                    # # Start plotting single plots
-                    # plt.figure(figsize=(8,6))
-                    # plt.plot(water_curve['water_quantity'], water_curve[column_name], linewidth=6,)
-                    # plt.xlabel('Cumulative Water Supply (billion m³/year)')
-                    # plt.ylabel(ylabel)
-                    # xlim = plot_limit
-                    # plt.xlim(0, xlim)
-                    # plt.ylim(ymin=0)
-                    # plt.title(plot_title + f' {get_country_name([country])}' + verbal_suffix)
-                    # plt.legend()
-                    # plt.grid(True, alpha=0.3)
-                    # plt.tight_layout()
-                    # plt.savefig(output_dir + country + savefig_name + country + suffix + '.png', bbox_inches="tight", )
-
             # For combined plots
             line_styles = [
                             "-",                 # solid
@@ -118,54 +101,13 @@ def plot_water_curves(cost_curves_dir: str,
             plt.ylabel(ylabel)
             xlim = plot_limit
             plt.xlim(0, xlim)
-            plt.ylim(ymin=0)
+            ylim = np.interp(xlim, water_curve['water_quantity'], water_curve[column_name]) * 1.1
+            plt.ylim(ymin=0, ymax=ylim)
             plt.title(plot_title + f' {get_country_name([country])}')
             plt.legend()
             plt.grid(True, alpha=0.3)
             plt.tight_layout()
             plt.savefig(output_dir + country + savefig_name + country + '_combined.png', bbox_inches="tight", )
-
-
-    # # Energy curves
-    # for filename in os.listdir(energy_curves_dir):
-    #     if filename.endswith(".csv"):
-    #         filename_trancate = filename.replace('.csv', '') # to avoid trouble in following string slicing
-    #         country = filename_trancate.split('_')[2] # hard-coded based on naming convention
-    #         if (len(plot_countries) > 0) and (country not in plot_countries):
-    #             continue
-    #         filepath = os.path.join(energy_curves_dir, filename)
-    #         water_curve = pd.read_csv(filepath)
-
-    #         # Add suffix
-    #         verbal_suffix = ''
-    #         flag_zld = False
-    #         if 'noDesal' in filename_trancate:
-    #             verbal_suffix += ', no desalination'
-    #         else:
-    #             if 'ZLD' in filename_trancate:
-    #                 verbal_suffix += ' with ZLD'
-    #                 flag_zld = True
-    #             if ('comp' in filename_trancate) and flag_zld:
-    #                 verbal_suffix += ', with compensation'
-    #             elif ('comp' in filename_trancate) and flag_zld==False:
-    #                 verbal_suffix += ' with compensation'
-    #             if verbal_suffix != '':
-    #                 verbal_suffix = ' (' + verbal_suffix.strip() + ')'
-    #         suffix = filename_trancate.split(country, 1)[1]
-
-    #         # Start plotting
-    #         plt.figure(figsize=(8,6))
-    #         plt.plot(water_curve['water_quantity'], water_curve['energy'], linewidth=6,)
-    #         plt.xlabel('Cumulative Water Supply (billion m³/year)')
-    #         plt.ylabel('Cumulative energy (TWh/year)')
-    #         xlim = plot_limit
-    #         plt.xlim(0, xlim)
-    #         plt.ylim(ymin=0)
-    #         plt.title(f'Water Supply Energy Demand for {get_country_name([country])}' + verbal_suffix)
-    #         plt.legend()
-    #         plt.grid(True, alpha=0.3)
-    #         plt.tight_layout()
-    #         plt.savefig(output_dir + 'energy_curve_' + country + suffix + '.png', bbox_inches="tight", )
 
 
 

@@ -17,6 +17,7 @@ rule produce_water_curves:
         compensate=config["compensate"],
         plot_limit=config["plot_limit"],
         countries=lambda wildcards: config.get("countries", "")
+    # FIXME: how to make it possible to run the rule several times with different config, without deleting this flag file?
     output:
         touch("results/cost_curves/compute_complete.flag"),
     conda:
@@ -38,7 +39,7 @@ rule plot_curves:
         output_dir="results/curves_plots/",
         plot_countries=lambda wildcards: config.get("countries", "")
     output:
-        touch("results/curves_plots/plot_complete.flag"),
+        directory("results/curves_plots")
     conda:
         "../envs/default.yaml",
     script:

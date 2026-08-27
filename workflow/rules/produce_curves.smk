@@ -23,6 +23,7 @@ rule produce_water_curves:
     input:
         processed="<resources>/processed/processed_FAO.csv",
         configfile="config/config.yaml",
+        helper_functions_path=workflow.source_path("../internal/helper_functions.py")
     output:
         cost_curves_output=directory(f"<results>/cost_curves/{suffix}/"),
     conda:
@@ -56,6 +57,7 @@ rule plot_curves:
         plot_countries=lambda wildcards: config.get("countries", ""),
     input:
         cost_curves_dir=directory("results/cost_curves/"),
+        helper_functions_path=workflow.source_path("../internal/helper_functions.py")
     output:
         directory("<results>/curves_plots"),
     conda:

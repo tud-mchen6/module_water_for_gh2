@@ -6,8 +6,8 @@ rule select_bulk_FAO_data:
         """Select the relevant parts from the FAO bulk data."""
     input:
         bulk="<resources>/automatic/bulk_FAO.csv",
-        # TODO: not sure yet where this file should be placed, this is a temporary location
         landlocked=workflow.source_path("../internal/landlocked_countries.csv"),
+        helper_functions_path=workflow.source_path("../internal/helper_functions.py")
     params:
         params_relevant=internal["resources"]["automatic"]["params_relevant"],
     output:
@@ -23,6 +23,7 @@ rule process_FAO_data:
         """Process the selected FAO data into final format."""
     input:
         selected_path="<resources>/processed/selected_FAO.csv",
+        helper_functions_path=workflow.source_path("../internal/helper_functions.py")
     params:
         municipal_benchmark=config["municipal_benchmark"],
         internal_use_factor=config["internal_use_factor"],

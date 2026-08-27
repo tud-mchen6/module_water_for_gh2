@@ -37,7 +37,7 @@ rule get_specific_water_curve:
     input:
         cost_curves_dir=directory(f"<results>/cost_curves/{suffix}/"),
     output:
-        cost_curve_file="<results>/cost_curves/exposed/{shape}_{suffix}.csv",
+        cost_curve_file="<results>/cost_curves/exposed/water_curve_{shape}_{suffix}.csv",
     log:
         "<logs>/get_specific_water_curve_{shape}_{suffix}.log",
     message:
@@ -45,7 +45,15 @@ rule get_specific_water_curve:
 
 
 
+
+
+
+
         Get the requested country water curve from the directory.
+
+
+
+
 
 
 
@@ -69,6 +77,14 @@ rule plot_curves:
         plot_countries=lambda wildcards: config.get("countries", ""),
     message:
         """Plot the water cost curve and energy curve that are
+
+
+
+
+
+
+
+
 
 
 

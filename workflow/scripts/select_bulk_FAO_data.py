@@ -4,7 +4,7 @@ import os
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(snakemake.input.helper_functions_path).parent))
-from helper_functions import get_alpha_3, change_FAO_column_names
+from helper_functions import *
 
 
 

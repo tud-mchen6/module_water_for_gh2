@@ -2,8 +2,9 @@ import pandas as pd
 import heapq as hq
 import os
 import sys
-sys.path.insert(0, str(snakemake.input.helper_functions_path.rsplit("/", 1)[0]))
-from internal.helper_functions import *
+from pathlib import Path
+sys.path.insert(0, str(Path(snakemake.input.helper_functions_path).parent))
+from helper_functions import *
 
 
 def produce_water_curves(

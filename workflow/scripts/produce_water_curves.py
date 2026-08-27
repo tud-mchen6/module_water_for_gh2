@@ -3,6 +3,7 @@ import heapq as hq
 import os
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(snakemake.input.helper_functions_path).parent))
 from helper_functions import *
 
@@ -180,11 +181,7 @@ def produce_water_curves(
         output_df["unit_ener"] = "kWh/m3"
 
         output_df.to_csv(
-            cost_curves_output + "/"
-            + row["ISO3"]
-            + "_"
-            + suffix
-            + ".csv",
+            cost_curves_output + "/water_curve_" + row["ISO3"] + "_" + suffix + ".csv",
             index=False,
         )
 

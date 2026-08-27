@@ -11,11 +11,8 @@ def get_specific_water_curve(
     files = [str(file) for file in input_path.iterdir() if file.is_file()]
     shape = snakemake.wildcards.shape
     suffix = snakemake.wildcards.suffix
-    print(shape)
-    print(suffix)
     found = False
     for file in files:
-        print(file)
         if shape in file:
             try:
                 curve = pd.read_csv(

@@ -7,7 +7,7 @@ rule download_FAO_bulk:
     params:
         url=internal["resources"]["automatic"]["FAO_bulk_url"],
     output:
-        bulk="resources/automatic/bulk_FAO.csv",
+        bulk="<resources>/automatic/bulk_FAO.csv",
     conda:
         "../envs/shell.yaml",
     shell:

@@ -6,9 +6,10 @@ from internal.helper_functions import *
 
 def produce_water_curves(
     processed: str,
-    cost_curves_dir: list,
+    cost_curves_output: str,
     include_desal: bool,
     include_ZLD: bool,
+    suffix: str,
     basic_withdrawal_cost: float = 0.01,
     freshwater_for_h2: float = 0.8,
     compensate: bool = True,
@@ -21,7 +22,7 @@ def produce_water_curves(
 
     Parameters:
     - processed: str - Path to the processed FAO AQUASTAT data CSV file.
-    - cost_curves_dir: str - Path to store the final water cost curves files.
+    - cost_curves_output: str - Path to store the final water cost curves files.
     - include_desal: bool - Whether to include desalination in the calculation.
     - include_ZLD: bool - Whether to include zero liquid discharge in the calculation.
     - basic_withdrawal_cost: float - Basic cost for freshwater withdrawal, in EUR/m3.
@@ -95,28 +96,22 @@ def produce_water_curves(
     cost_total_freshwater = cost_total / total_freshwater_volume
 
     # create the curve folders
-    if not os.path.exists(cost_curves_dir):
-        os.makedirs(cost_curves_dir)
+    if not os.path.exists(cost_curves_output):
+        os.makedirs(cost_curves_output)
     else:
-        if os.listdir(cost_curves_dir):
+        if os.listdir(cost_curves_output):
             print(
-                f"Warning: The folder '{cost_curves_dir}' is NOT empty, might overwrite previous data!"
+                f"Warning: The folder '{cost_curves_output}' is NOT empty, might overwrite previous data!"
             )
 
     # create water curves and energy curves
     df = pd.read_csv(processed, index_col=0)
-    suffix_0 = "_noDesal" if not include_desal else ""
-    suffix_1 = "_ZLD" if include_ZLD else ""
-    # Compensation means if local renewable freshwater is insufficient, desalinated water needs to
-    # first be used for local withdrawal, before being used for hydrogen production.
-    suffix_2 = "_comp" if compensate else ""
 
     # Iterate over each country
     for index, row in df.reset_index().iterrows():
         # If countries list is provided, only produce curves for those countries
         if (len(countries) > 0) and (row["ISO3"] not in countries):
             continue
-        file_name = f"_{row['ISO3']}"
 
         # Initialise the df for the country, with columns prod, cost, and ener
         dict_country = {
@@ -181,16 +176,11 @@ def produce_water_curves(
         output_df["unit_cost"] = "EUR/m3"
         output_df["unit_ener"] = "kWh/m3"
 
-        os.makedirs(os.path.dirname(cost_curves_dir), exist_ok=True)
-        os.makedirs(os.path.dirname(cost_curves_dir + row["ISO3"] + "/"), exist_ok=True)
         output_df.to_csv(
-            cost_curves_dir
+            cost_curves_output + "/"
             + row["ISO3"]
-            + "/water_curve"
-            + file_name
-            + suffix_0
-            + suffix_1
-            + suffix_2
+            + "_"
+            + suffix
             + ".csv",
             index=False,
         )
@@ -199,9 +189,10 @@ def produce_water_curves(
 if __name__ == "__main__":
     produce_water_curves(
         processed=snakemake.input.processed,
-        cost_curves_dir=snakemake.params.cost_curves_dir,
+        cost_curves_output=snakemake.output.cost_curves_output,
         include_desal=snakemake.params.include_desal,
         include_ZLD=snakemake.params.include_ZLD,
+        suffix=snakemake.params.suffix,
         basic_withdrawal_cost=snakemake.params.basic_withdrawal_cost,
         freshwater_for_h2=snakemake.params.freshwater_for_h2,
         compensate=snakemake.params.compensate,

@@ -15,12 +15,6 @@ properties:
     type: number
     minimum: 0
     maximum: 1
-  cost_curves_dir:
-    description: "Directory to save the water cost curves."
-    type: string
-  energy_curves_dir:
-    description: "Directory to save the energy curves." 
-    type: string
   include_desal:
     description: "Whether to include desalination in the water sourcing options."
     type: boolean

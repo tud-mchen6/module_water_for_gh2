@@ -1,4 +1,4 @@
-[project]
+[workspace]
 name = "module_water_for_gh2"
 authors = ["See AUTHORS file"]
 description = "This module uses external data, mostly from FAO AQUASTAT, to estimate the water available for additional green hydrogen production on a national geographical resolution. If there is water stress, then assume a certain level of desalination can be used for that, with configurable assumptions of to what quantity desalination can be used and how desalination is deployed. The module outputs the quantity-cost curve for the water for green hydrogen."
@@ -20,6 +20,11 @@ python = ">=3.12"
 ruff = ">=0.9.9"
 snakefmt = ">=0.10.2"
 snakemake-minimal = ">=8.29.0"
+pycountry = ">=24.6.1,<25"
+country_converter = ">=1.3.2,<2"
+geopandas = ">=1.1.1,<2"
+cartopy = ">=0.25.0,<0.26"
+numpy = ">=2.3.5,<3"
 
 [tasks]
 test-integration = {cmd = "pytest tests/clio_test.py"}

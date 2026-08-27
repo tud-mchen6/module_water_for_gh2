@@ -1,16 +1,14 @@
 """Rules to used to download automatic resource files."""
 
 
-rule dummy_download:
+rule download_FAO_bulk:
     message:
-        "Download the clio README file."
+        "Download the bulk data from FAO."
     params:
-        url=internal["resources"]["automatic"]["dummy_readme"],
+        url=internal["resources"]["automatic"]["FAO_bulk_url"],
     output:
-        readme="resources/automatic/dummy_readme.md",
-    log:
-        "logs/dummy_download.log",
+        bulk="<resources>/automatic/bulk_FAO.csv",
     conda:
-        "../envs/shell.yaml"
+        "../envs/shell.yaml",
     shell:
-        'curl -sSLo {output.readme} "{params.url}"'
+        'curl -sSLo {output.bulk} "{params.url}"'

@@ -15,14 +15,16 @@ def get_specific_water_curve(
     for file in files:
         if shape in file:
             try:
-                curve = pd.read_csv(cost_curves_dir + "/" + shape + "_" + suffix + ".csv", index_col=0)
+                curve = pd.read_csv(
+                    cost_curves_dir + "/" + shape + "_" + suffix + ".csv", index_col=0
+                )
                 curve.to_csv(cost_curve_file)
                 found = True
                 return
             except:
-                raise("Cost curve directory doesn't exist.")
+                raise FileNotFoundError("Cost curve directory doesn't exist.")
     if not found:
-        raise('File not in target directory.')
+        raise FileNotFoundError("File not in target directory.")
 
 
 if __name__ == "__main__":

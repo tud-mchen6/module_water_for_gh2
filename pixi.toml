@@ -1,4 +1,4 @@
-[project]
+[workspace]
 name = "module_water_for_gh2"
 authors = ["See AUTHORS file"]
 description = "This module uses external data, mostly from FAO AQUASTAT, to estimate the water available for additional green hydrogen production on a national geographical resolution. If there is water stress, then assume a certain level of desalination can be used for that, with configurable assumptions of to what quantity desalination can be used and how desalination is deployed. The module outputs the quantity-cost curve for the water for green hydrogen."

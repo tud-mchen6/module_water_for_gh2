@@ -6,3 +6,38 @@ properties:
   dummy_text:
     description: A template example. Should be deleted in real applications.
     type: string
+  municipal_benchmark:
+    description: "Benchmark for municipal water withdrawal per capita (in cubic meters per year)."
+    type: number
+    minimum: 0
+  internal_use_factor:
+    description: "Factor representing the proportion of water that can be used in internal renewable water."
+    type: number
+    minimum: 0
+    maximum: 1
+  include_desal:
+    description: "Whether to include desalination in the water sourcing options."
+    type: boolean
+  include_ZLD:
+    description: "Whether to include Zero Liquid Discharge (ZLD) in the water sourcing options. Cannot be true if include_desal is False."
+    type: boolean
+  basic_withdrawal_cost:
+    description: "Basic cost of water withdrawal (EUR/m3)."
+    type: number
+    minimum: 0
+  freshwater_for_h2:
+    description: "Proportion of usable water allocated for green hydrogen production."
+    type: number
+    minimum: 0
+    maximum: 1
+  compensate:
+    description: "Whether to compensate water stress with desalinated wtaer."
+    type: boolean
+  plot_limit:
+    description: "Limit for plotting the x-axis of the curves (1e9 m3)."
+    type: number
+  countries:
+    description: "List of country codes to produce curve and plot the water curves for."
+    type: array
+    items:
+      type: string

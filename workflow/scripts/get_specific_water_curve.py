@@ -16,7 +16,7 @@ def get_specific_water_curve(
         if shape in file:
             try:
                 curve = pd.read_csv(
-                    cost_curves_dir + "/" + shape + "_" + suffix + ".csv", index_col=0
+                    cost_curves_dir + "/water_curve_" + shape + "_" + suffix + ".csv", index_col=0
                 )
                 curve.to_csv(cost_curve_file)
                 found = True

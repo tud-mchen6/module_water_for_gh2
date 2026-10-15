@@ -42,21 +42,7 @@ rule get_specific_water_curve:
         "<logs>/get_specific_water_curve_{shape}_{suffix}.log",
     message:
         """
-
-
-
-
-
-
-
         Get the requested country water curve from the directory.
-
-
-
-
-
-
-
         """
     script:
         "../scripts/get_specific_water_curve.py"
@@ -77,21 +63,6 @@ rule plot_curves:
         plot_countries=lambda wildcards: config.get("countries", ""),
     message:
         """Plot the water cost curve and energy curve that are
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         found in the results folder."""
     script:
         "../scripts/plot_water_curves.py"

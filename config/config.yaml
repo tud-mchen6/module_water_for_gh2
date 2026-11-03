@@ -1,17 +1,36 @@
 # A minimal example of how to configure this module
 
+# TODO: make this also configurable per country
 municipal_benchmark: 36.5
 internal_use_factor: 0.7
-include_desal: True
-include_ZLD: False
-basic_withdrawal_cost: 0.01 # unit: EUR/m3
-freshwater_for_h2: 0.5 # proportion of usable water allocated for green hydrogen production
-compensate: True
-plot_limit: 1 # unit: 1e9 m3
-# countries:
-#   - ALB
-#   - ARE
-#   - AUT
-#   - LVA
-#   - SRB
-#   - BOL
+
+scenarios:
+  test:
+    include_desal: True
+    include_ZLD: False
+    basic_withdrawal_cost: 0.01 # unit: EUR/m3
+    freshwater_for_h2: 0.5 # proportion of usable water allocated for green hydrogen production
+    compensate: True
+    plot_limit: 1 # unit: 1e9 m3
+    init_salinity: 35  # kg/m3. A rather conservative value. But the Mediterranean might go up to 39. See https://explore.webodv.awi.de/ocean/woa23/1.00-degree/01_all-years/01_annual/woa23_1.00deg_all-years_annual/
+    recovery: 0.45  # single-pass recovery rate of the first stage of desalination. Out of 1 m3 feed seawater, 0.45 m3 freshwater passes. Reference: Reddy and Ghaffour, 2007
+    desalination_cost: 1.2   # EUR/m3 freshwater produced at the first stage. Some further investment into elec-heat energy may be needed. See Eke et al. 2020
+
+    overrides:
+      ARE:
+        init_salinity: 40
+        basic_withdrawal_cost: 0.02
+      CHN:
+        init_salinity: 30
+        basic_withdrawal_cost: 0.015
+  
+  test_2:
+    include_desal: False
+    include_ZLD: False
+    basic_withdrawal_cost: 0.01 # unit: EUR/m3
+    freshwater_for_h2: 0.5 # proportion of usable water allocated for green hydrogen production
+    compensate: True
+    plot_limit: 1 # unit: 1e9 m3
+    init_salinity: 37
+    recovery: 0.46
+    desalination_cost: 1.1

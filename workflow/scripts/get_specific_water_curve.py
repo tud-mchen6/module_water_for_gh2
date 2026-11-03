@@ -10,13 +10,13 @@ def get_specific_water_curve(
     input_path = Path(cost_curves_dir)
     files = [str(file) for file in input_path.iterdir() if file.is_file()]
     shape = snakemake.wildcards.shape
-    suffix = snakemake.wildcards.suffix
+    scenario = snakemake.wildcards.scenario
     found = False
     for file in files:
         if shape in file:
             try:
                 curve = pd.read_csv(
-                    cost_curves_dir + "/water_curve_" + shape + "_" + suffix + ".csv", index_col=0
+                    cost_curves_dir + "/water_curve_" + shape + "_" + scenario + ".csv", index_col=0
                 )
                 curve.to_csv(cost_curve_file)
                 found = True

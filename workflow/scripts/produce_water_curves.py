@@ -11,12 +11,7 @@ from helper_functions import *
 
 
 def produce_water_curves(
-    processed: str,
-    # cost_curves_output: str,
-    shape: str,
-    cost_curve_file: str,
-    config: dict,
-    countries: list = [],
+    processed: str, shape: str, cost_curve_file: str, config: dict
 ):
     """
     Produce both cost-quantity curves and energy-quantity curves for water for a
@@ -24,39 +19,26 @@ def produce_water_curves(
 
     Parameters:
     - processed: str - Path to the processed FAO AQUASTAT data CSV file.
-    - cost_curves_output: str - Path to store the final water cost curves files.
+    - shape: str - The ISO3 country code for which to produce the curves.
+    - cost_curve_file: str - Path to store the final water cost curves files.
     - config: dict - Configuration dictionary containing parameters for the scenario.
-    - countries: list - List of country codes to produce curves for. If empty, produce for all countries.
 
     Unit: water, 1e9 m3/year; monetary value, 1e9 EUR; energy, TWh/year.
     """
 
     # create the curve folders
-    if not os.path.exists(cost_curve_file):
-        os.makedirs(cost_curve_file)
-    else:
-        if os.listdir(cost_curve_file):
-            print(
-                f"Warning: The file '{cost_curve_file}' is NOT empty, might overwrite previous data!"
-            )
+    directory = os.path.dirname(cost_curve_file)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
     # create water curves and energy curves
     df = pd.read_csv(processed, index_col=0)
-
-    # TODO: get rid of the countries thing
-    # If countries list is provided, only produce curves for those countries
-    # if (len(countries) > 0) and (row["ISO3"] not in countries):
-    #     return
 
     # get only the df part that is relevant for this shape
     row = df.loc[shape]
 
     # Initialise the df for the country, with columns prod, cost, and ener
-    dict_country = {
-        "prod": [],
-        "cost": [],
-        "ener": [],
-    }
+    dict_country = {"prod": [], "cost": [], "ener": []}
 
     # Basic params from config
     overrides = {}
@@ -111,8 +93,8 @@ def produce_water_curves(
             salt_mass / saturate_salinity / density_saturate_solution
         )  # kg / (kg/m3) = m3. First calculate the total mass of the saturated solution, then use density to calculate the volume of the solution
         freshwater_volume_2_1 = (
-            1 - recovery
-        ) - saturate_water_volume  # Approximate the volume of produced freshwater in the saturation process; remaining brine volume minus the saturated brine volume
+            (1 - recovery) - saturate_water_volume
+        )  # Approximate the volume of produced freshwater in the saturation process; remaining brine volume minus the saturated brine volume
         E_total += E_stage2_1 * freshwater_volume_2_1
         total_freshwater_volume += freshwater_volume_2_1
 
@@ -133,7 +115,6 @@ def produce_water_curves(
     E_total_freshwater = E_total / total_freshwater_volume
     cost_total_freshwater = cost_total / total_freshwater_volume
 
-    # breakpoint()
     if not row["landlocked"]:
         # If there is no sufficient local renewable freshwater
         if row["excess"] < 0:
@@ -191,20 +172,13 @@ def produce_water_curves(
     output_df["unit_cost"] = "EUR/m3"
     output_df["unit_ener"] = "kWh/m3"
 
-    breakpoint()
-    print(f"Writing to: {os.path.abspath(cost_curve_file)}")
-    output_df.to_csv(
-        cost_curve_file,
-        index=False,
-    )
+    output_df.to_csv(cost_curve_file, index=False)
 
 
 if __name__ == "__main__":
     produce_water_curves(
         processed=snakemake.input.processed,
-        # cost_curves_output=snakemake.output.cost_curves_output,
         shape=snakemake.params.shape,
         cost_curve_file=snakemake.output.cost_curve_file,
         config=snakemake.params.config,
-        countries=snakemake.params.countries,
     )

@@ -2,6 +2,7 @@ import pandas as pd
 import heapq as hq
 import os
 import sys
+import numpy as np
 from pathlib import Path
 sys.path.insert(0, str(Path(snakemake.input.helper_functions_path).parent))
 from helper_functions import *

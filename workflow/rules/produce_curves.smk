@@ -2,18 +2,21 @@
 
 import json
 
+
 rule produce_water_curves:
     input:
         processed="<resources>/processed/processed_FAO.csv",
         configfile="config/config.yaml",
         helper_functions_path=workflow.source_path("../internal/helper_functions.py"),
+    output:
+        # cost_curves_output=directory("<results>/cost_curves/{scenario}/"),
+        cost_curve_file="<results>/cost_curves/water_curve_{shape}_{scenario}.csv",
     conda:
         "../envs/default.yaml"
     params:
         config=lambda wildcards: config["scenarios"][wildcards.scenario],
         countries=lambda wildcards: config.get("countries", ""),
-    output:
-        cost_curves_output=directory("<results>/cost_curves/{scenario}/"),
+        shape=lambda wc: wc.shape,
     message:
         """Produce the water curves."""
     script:
@@ -29,7 +32,21 @@ rule get_specific_water_curve:
         "<logs>/get_specific_water_curve_{shape}_{scenario}.log",
     message:
         """
+
+
+
+
+
+
+
         Get the requested country water curve from the directory.
+
+
+
+
+
+
+
         """
     script:
         "../scripts/get_specific_water_curve.py"

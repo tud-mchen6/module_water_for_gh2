@@ -2,4 +2,18 @@
 resources:
   automatic:
     # Links for automatically downloaded files
-    dummy_readme: "https://raw.githubusercontent.com/calliope-project/clio/refs/heads/main/README.md"
+    FAO_bulk_url: "https://storage.googleapis.com/810c63d8-3fde-4ecd-9882-14d62e3058be/static/sites/aquastat/bulk/bulk_eng(in).csv"
+    params_relevant: [
+      'Exploitable: irregular renewable surface water',
+      'Exploitable: regular renewable groundwater',
+      'Exploitable: regular renewable surface water',
+      'Total exploitable water resources',
+      'Total internal renewable water resources (IRWR)',
+      'Desalinated water produced',
+      'Direct use of treated municipal wastewater for irrigation purposes',
+      'Agricultural water withdrawal',
+      'Industrial water withdrawal',
+      'Municipal water withdrawal',
+      'Total water withdrawal',
+      'Total population',
+    ]
